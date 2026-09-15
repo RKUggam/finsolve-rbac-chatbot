@@ -1,0 +1,13 @@
+{
+  "_comment": "CI gate thresholds. A deploy is blocked if any metric falls below its minimum or any hard gate fails. Tune as the corpus and model evolve.",
+  "ragas_minimums": {
+    "faithfulness": 0.80,
+    "answer_relevancy": 0.75,
+    "context_precision": 0.70,
+    "context_recall": 0.70
+  },
+  "hard_gates": {
+    "rbac_leakage_max": 0,
+    "behavioral_pass_rate_min": 1.0
+  }
+}

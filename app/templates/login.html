@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>FinSolve Assistant — Sign in</title>
+  <link rel="stylesheet" href="/static/styles.css" />
+</head>
+<body class="login-body">
+  <main class="login-card">
+    <div class="brand">
+      <div class="brand-mark">FS</div>
+      <h1>FinSolve Assistant</h1>
+      <p class="subtitle">Internal knowledge assistant · role-based access</p>
+    </div>
+
+    <form id="login-form" autocomplete="off">
+      <label for="username">Username</label>
+      <input id="username" name="username" type="text" required autofocus />
+
+      <label for="password">Password</label>
+      <input id="password" name="password" type="password" required />
+
+      <button type="submit" id="login-btn" class="btn-primary">Sign in</button>
+      <p id="login-error" class="error" role="alert"></p>
+    </form>
+
+    <details class="demo-users">
+      <summary>Demo accounts</summary>
+      <p>Password for all: <code>FinSolve@2024</code></p>
+      <ul>
+        <li><code>cfo</code> — C-level (full access)</li>
+        <li><code>finance.lead</code> — Finance</li>
+        <li><code>marketing.lead</code> — Marketing</li>
+        <li><code>hr.lead</code> — HR</li>
+        <li><code>eng.lead</code> — Engineering</li>
+        <li><code>employee</code> — General only</li>
+      </ul>
+    </details>
+  </main>
+
+  <script src="/static/login.js"></script>
+</body>
+</html>

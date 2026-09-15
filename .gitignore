@@ -1,0 +1,46 @@
+# ---- Secrets ----
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+
+# ---- Python ----
+__pycache__/
+*.py[cod]
+*.egg-info/
+.eggs/
+build/
+dist/
+.venv/
+venv/
+env/
+.python-version
+
+# ---- Testing / coverage ----
+.pytest_cache/
+.coverage
+coverage.xml
+htmlcov/
+.mypy_cache/
+.ruff_cache/
+
+# ---- Local vector store / data volumes ----
+volumes/
+milvus_data/
+*.db
+
+# ---- Evaluation output ----
+evaluation/reports/*.json
+evaluation/reports/*.html
+!evaluation/reports/.gitkeep
+
+# ---- Logs ----
+logs/
+*.log
+
+# ---- Editor / OS ----
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db

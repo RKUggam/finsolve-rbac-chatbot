@@ -1,0 +1,52 @@
+# ---- Core web framework ----
+fastapi==0.115.6
+uvicorn[standard]==0.34.0
+jinja2==3.1.5
+python-multipart==0.0.20
+itsdangerous==2.2.0
+
+# ---- Config & validation ----
+pydantic==2.10.4
+pydantic-settings==2.7.1
+python-dotenv==1.0.1
+
+# ---- Auth ----
+passlib[bcrypt]==1.7.4
+bcrypt==4.2.1
+PyJWT==2.10.1
+
+# ---- RAG framework ----
+langchain==0.3.14
+langchain-core==0.3.29
+langchain-community==0.3.14
+langchain-openai==0.2.14
+langchain-milvus==0.1.8
+langchain-text-splitters==0.3.5
+
+# ---- Vector DB ----
+pymilvus==2.5.3
+
+# ---- LLM / embeddings provider (Azure OpenAI) ----
+openai==1.59.6
+
+# ---- Tokenisation / cost ----
+tiktoken==0.8.0
+
+# ---- Guardrails (PII) ----
+# The always-on PII layer is regex-based (see app/guardrails/pii.py) and needs no
+# extra deps. For NER-based PII detection (names, locations) install the optional
+# Presidio stack: `pip install -r requirements-optional.txt` — the code detects it
+# automatically and falls back to regex if it is absent.
+
+# ---- HTTP client (cost-alert webhook; also a transitive dep of openai) ----
+httpx==0.28.1
+
+# ---- Monitoring ----
+prometheus-client==0.21.1
+structlog==24.4.0
+
+# ---- Data handling ----
+pandas==2.2.3
+
+# ---- Optional tracing (enabled only if LANGCHAIN_TRACING_V2=true) ----
+langsmith==0.2.10

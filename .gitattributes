@@ -1,0 +1,8 @@
+# Normalise line endings: LF in the repo for all text files.
+* text=auto eol=lf
+
+# Binary / non-diffable
+*.docx binary
+*.png binary
+*.jpg binary
+*.ico binary

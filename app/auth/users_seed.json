@@ -1,0 +1,41 @@
+{
+  "_comment": "Demo user directory. Passwords here are plaintext ONLY for local demo convenience and are hashed with bcrypt at load time. For staging/production, replace this file (or back the UserRepository with a real identity provider / database) and NEVER ship default passwords. Default demo password for every user below is 'FinSolve@2024'.",
+  "users": [
+    {
+      "username": "cfo",
+      "full_name": "Rakesh Menon (CFO)",
+      "role": "c_level",
+      "password": "FinSolve@2024"
+    },
+    {
+      "username": "finance.lead",
+      "full_name": "Isha Chowdhury (Finance)",
+      "role": "finance",
+      "password": "FinSolve@2024"
+    },
+    {
+      "username": "marketing.lead",
+      "full_name": "Neha Gupta (Marketing)",
+      "role": "marketing",
+      "password": "FinSolve@2024"
+    },
+    {
+      "username": "hr.lead",
+      "full_name": "Priya Nair (HR)",
+      "role": "hr",
+      "password": "FinSolve@2024"
+    },
+    {
+      "username": "eng.lead",
+      "full_name": "Arjun Rao (Engineering)",
+      "role": "engineering",
+      "password": "FinSolve@2024"
+    },
+    {
+      "username": "employee",
+      "full_name": "Sam Verma (Employee)",
+      "role": "employee",
+      "password": "FinSolve@2024"
+    }
+  ]
+}

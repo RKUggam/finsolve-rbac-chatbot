@@ -1,0 +1,127 @@
+name: CD
+
+# Build → push → deploy → ingest → evaluation gate.
+# Traffic is only served by the new revision after the eval gate passes.
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+env:
+  RESOURCE_GROUP: finsolve-rg
+  IMAGE_NAME: finsolve-rbac-chatbot
+
+permissions:
+  id-token: write   # OIDC login to Azure
+  contents: read
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+    outputs:
+      image: ${{ steps.meta.outputs.image }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Azure login (OIDC)
+        uses: azure/login@v2
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+      - name: Resolve ACR + image tag
+        id: meta
+        run: |
+          ACR=$(az acr list -g "$RESOURCE_GROUP" --query "[0].name" -o tsv)
+          echo "image=$ACR.azurecr.io/$IMAGE_NAME:${GITHUB_SHA::8}" >> "$GITHUB_OUTPUT"
+          echo "acr=$ACR" >> "$GITHUB_OUTPUT"
+
+      - name: Build & push image to ACR
+        run: |
+          az acr build \
+            --registry "${{ steps.meta.outputs.acr }}" \
+            --image "$IMAGE_NAME:${GITHUB_SHA::8}" \
+            --image "$IMAGE_NAME:latest" \
+            .
+
+  deploy:
+    needs: build-and-push
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Azure login (OIDC)
+        uses: azure/login@v2
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+      - name: Deploy infrastructure + app (Bicep)
+        run: |
+          az deployment group create \
+            --resource-group "$RESOURCE_GROUP" \
+            --template-file infra/main.bicep \
+            --parameters @infra/main.parameters.json \
+            --parameters \
+              containerImage="${{ needs.build-and-push.outputs.image }}" \
+              azureOpenAiApiKey="${{ secrets.AZURE_OPENAI_API_KEY }}" \
+              milvusToken="${{ secrets.MILVUS_TOKEN }}" \
+              jwtSecret="${{ secrets.JWT_SECRET_KEY }}"
+
+  ingest-and-evaluate:
+    needs: deploy
+    runs-on: ubuntu-latest
+    env:
+      AZURE_OPENAI_ENDPOINT: ${{ secrets.AZURE_OPENAI_ENDPOINT }}
+      AZURE_OPENAI_API_KEY: ${{ secrets.AZURE_OPENAI_API_KEY }}
+      AZURE_OPENAI_CHAT_DEPLOYMENT: ${{ vars.AZURE_OPENAI_CHAT_DEPLOYMENT }}
+      AZURE_OPENAI_EMBEDDING_DEPLOYMENT: ${{ vars.AZURE_OPENAI_EMBEDDING_DEPLOYMENT }}
+      MILVUS_URI: ${{ secrets.MILVUS_URI }}
+      MILVUS_TOKEN: ${{ secrets.MILVUS_TOKEN }}
+      APP_ENV: staging
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements-dev.txt
+
+      - name: Re-ingest documents (idempotent rebuild)
+        run: python -m scripts.ingest
+
+      - name: Evaluation gate (RBAC leakage + behavioural + Ragas)
+        run: python -m evaluation.run_eval
+
+      - name: Upload evaluation report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: eval-report
+          path: evaluation/reports/latest.json
+
+  promote:
+    needs: ingest-and-evaluate
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Azure login (OIDC)
+        uses: azure/login@v2
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+      - name: Route 100% traffic to the latest revision
+        run: |
+          APP=$(az containerapp list -g "$RESOURCE_GROUP" --query "[0].name" -o tsv)
+          az containerapp ingress traffic set \
+            --name "$APP" --resource-group "$RESOURCE_GROUP" \
+            --revision-weight latest=100

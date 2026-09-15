@@ -1,0 +1,19 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "namePrefix": { "value": "finsolve" },
+    "appEnv": { "value": "production" },
+    "containerImage": { "value": "finsolveacr.azurecr.io/finsolve-rbac-chatbot:latest" },
+    "azureOpenAiEndpoint": { "value": "https://<your-resource>.openai.azure.com/" },
+    "azureOpenAiApiKey": { "value": "<set-via-cli-or-keyvault>" },
+    "azureOpenAiApiVersion": { "value": "2024-10-21" },
+    "chatDeployment": { "value": "gpt-4o" },
+    "embeddingDeployment": { "value": "text-embedding-3-large" },
+    "milvusUri": { "value": "https://<id>.api.<region>.zillizcloud.com" },
+    "milvusToken": { "value": "<set-via-cli-or-keyvault>" },
+    "milvusCollection": { "value": "finsolve_documents" },
+    "jwtSecret": { "value": "<generate-a-long-random-string>" },
+    "costAlertWebhookUrl": { "value": "" }
+  }
+}

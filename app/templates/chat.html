@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>FinSolve Assistant</title>
+  <link rel="stylesheet" href="/static/styles.css" />
+</head>
+<body class="chat-body">
+  <header class="topbar">
+    <div class="topbar-left">
+      <div class="brand-mark">FS</div>
+      <div class="topbar-title">FinSolve Assistant<small>Internal knowledge · role-based access</small></div>
+    </div>
+    <div class="topbar-right">
+      <div class="user-chip">
+        <div class="avatar user" id="user-avatar">–</div>
+        <div>
+          <div class="user-name" id="user-name">Loading…</div>
+          <div class="user-role" id="user-role"></div>
+        </div>
+      </div>
+      <button id="logout-btn" class="ghost-btn">Sign out</button>
+    </div>
+  </header>
+
+  <div class="layout">
+    <aside class="sidebar">
+      <div class="side-section">
+        <p class="side-title">Your access</p>
+        <div class="dept-list" id="dept-list"><span class="side-note">Ask a question to see your accessible data.</span></div>
+      </div>
+      <div class="side-section">
+        <p class="side-title">Try asking</p>
+        <div class="suggestions" id="suggestions"></div>
+      </div>
+      <div class="side-section">
+        <p class="side-title">About</p>
+        <p class="side-note">Answers are drawn only from documents your role can access, with sources cited. Sensitive data is protected by guardrails.</p>
+      </div>
+    </aside>
+
+    <main class="chat-main">
+      <div class="messages" id="messages">
+        <div class="messages-inner" id="messages-inner">
+          <div class="msg assistant">
+            <div class="avatar assistant">FS</div>
+            <div class="msg-content">
+              <div class="bubble">
+                <p>Hi! I'm the FinSolve Assistant. Ask me anything about the company data you have access to — I'll answer from the source documents and cite them.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="composer-wrap">
+        <form id="chat-form" class="composer">
+          <textarea id="chat-input" rows="1" placeholder="Ask a question…" required></textarea>
+          <button type="submit" id="send-btn" class="send-btn" aria-label="Send">
+            <svg viewBox="0 0 24 24"><path d="M3.4 20.4l17.45-7.48a1 1 0 000-1.84L3.4 3.6a.993.993 0 00-1.39.91L2 9.12c0 .5.37.93.87.99L17 12 2.87 13.88c-.5.07-.87.5-.87 1l.01 4.61c0 .71.73 1.2 1.39.91z"/></svg>
+          </button>
+        </form>
+        <p class="composer-hint">FinSolve Assistant can make mistakes. Verify important figures against the cited source.</p>
+      </div>
+    </main>
+  </div>
+
+  <script src="/static/chat.js"></script>
+</body>
+</html>

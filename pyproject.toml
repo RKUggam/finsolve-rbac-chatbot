@@ -1,0 +1,28 @@
+[project]
+name = "finsolve-rbac-chatbot"
+version = "1.0.0"
+description = "FinSolve Technologies — internal RAG chatbot with Role-Based Access Control"
+requires-python = ">=3.11"
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+src = ["app", "evaluation", "scripts", "tests"]
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "B", "UP", "C4", "SIM"]
+ignore = ["B008"]  # FastAPI Depends() in argument defaults is idiomatic
+
+[tool.mypy]
+python_version = "3.11"
+warn_unused_ignores = true
+ignore_missing_imports = true
+plugins = ["pydantic.mypy"]
+
+[tool.pytest.ini_options]
+addopts = "-q --strict-markers"
+asyncio_mode = "auto"
+testpaths = ["tests"]
+markers = [
+    "integration: tests that require Milvus and Azure OpenAI to be reachable",
+]
